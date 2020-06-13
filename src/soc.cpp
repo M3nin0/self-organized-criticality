@@ -1,32 +1,25 @@
 #include <cstddef>
 #include <vector>
 
-#include "xtensor/xarray.hpp"
-#include "xtensor/xadapt.hpp"
+#include <xtensor/xtensor.hpp>
 #include <xtensor/xhistogram.hpp>
 
-xt::xarray<double> soc(xt::xarray<double>& vec, std::size_t binSize = 50)
+#include "soc.hpp"
+
+std::vector<xt::xtensor<double, 1>> soc(xt::xtensor<double, 1>& vec, std::size_t binSize)
 {
     std::size_t n = vec.size();
     std::vector<std::size_t> shape = { 1, n };
 
     auto mean = xt::mean(vec);
-    auto std = xt::stddev(vec);
+    auto stdd = xt::stddev(vec);
 
-    std::vector<double> vecTmp;
-
-    for (auto data: vec)
-    {
-        vecTmp.push_back(((data - mean) / std)(0));
-    }
-
-    xt::xtensor<double, 1> counts = xt::histogram(xt::adapt(vecTmp, shape), binSize);
-
-    vecTmp.clear();
-    for(auto c: counts)
-    {
-        vecTmp.push_back(c / n);
-    }
-
-    return xt::adapt(vecTmp, n);
+    xt::xtensor<double, 1> gamma = (vec - mean) / stdd;
+    xt::xtensor<double, 1> count = xt::histogram(gamma, binSize);
+    
+    // Criando resultado
+    std::vector<xt::xtensor<double, 1>> res;
+    res.push_back(count / n);
+    res.push_back(count);
+    return res;
 }

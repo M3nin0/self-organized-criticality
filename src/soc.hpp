@@ -4,6 +4,8 @@
 #include <cstddef>
 #include "xtensor/xarray.hpp"
 
-xt::xarray<double> soc(xt::xarray<double>& soc, std::size_t binSize = 50);
+#include <vector>
+
+std::vector<xt::xtensor<double, 1>> soc(xt::xtensor<double, 1>& soc, std::size_t binSize = 50);
 
 #endif // __SOC__HEADER__
